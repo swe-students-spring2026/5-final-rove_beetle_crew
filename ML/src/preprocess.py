@@ -1,5 +1,5 @@
 """
-This module provides utility for data preprocessing.
+This module process the raw csv to cleaned csv, run this if you don't have the cleaned file yet.
 """
 
 import pandas as pd
