@@ -1,3 +1,7 @@
+"""
+This module provides utility for data preprocessing.
+"""
+
 import pandas as pd
 
 from config import (
