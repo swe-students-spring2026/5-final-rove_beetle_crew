@@ -54,10 +54,11 @@ def preprocess_facilities():
     df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
 
     df = df[FACILITIES_OUTPUT_COLUMNS].dropna()
+    df = df[(df["longitude"] != 0.0) & (df["latitude"] != 0.0)]
     df.to_csv(PROCESSED_FACILITIES_PATH, index=False)
 
     print(f"Cleaned dataset written to {PROCESSED_FACILITIES_PATH}")
 
 if __name__ == "__main__":
-    # preprocess_311()
+    preprocess_311()
     preprocess_facilities()

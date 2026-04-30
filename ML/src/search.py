@@ -11,7 +11,7 @@ from embedding import load_311_categories, embed_311, load_facilities_categories
 
 
 def find_311_categories(query):
-    """placeholder"""
+    """semantic search for the topk similar categories"""
     query = str(query.strip())
 
     categories = load_311_categories()
@@ -37,11 +37,11 @@ def find_311_categories(query):
     return result
 
 def find_facilities_categories(query, clusters):
-    """placeholder"""
+    """semantic search for the topk similar facility types from topk least problematic clusters from clustering"""
     query = str(query.strip())
 
     categories = load_facilities_categories(clusters)
-    embedded_category = torch.from_numpy(np.load(embed_facilities(clusters)))
+    embedded_category = torch.from_numpy(embed_facilities(clusters))
 
     model = SentenceTransformer(
         EMBEDDINGS_MODEL,
