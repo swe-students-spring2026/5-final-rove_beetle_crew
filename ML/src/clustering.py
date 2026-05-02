@@ -28,13 +28,13 @@ def load_311_data():
     """load cleaned csv to list"""
     complaints = pd.read_csv(
         PROCESSED_311_PATH,
-        usecols=["Problem", "Problem Detail", "Longitude", "Latitude"],
+        usecols=["Problem", "Problem Detail", "Latitude", "Longitude"],
     ).dropna()
 
     complaints["Problem"] = complaints["Problem"].astype(str).str.strip()
     complaints["Problem Detail"] = complaints["Problem Detail"].astype(str).str.strip()
-    complaints["Longitude"] = pd.to_numeric(complaints["Longitude"], errors="coerce")
     complaints["Latitude"] = pd.to_numeric(complaints["Latitude"], errors="coerce")
+    complaints["Longitude"] = pd.to_numeric(complaints["Longitude"], errors="coerce")
     complaints = complaints.dropna()
 
     data = []
@@ -46,7 +46,7 @@ def load_facilities_data():
     """load cleaned csv to list"""
     facilities = pd.read_csv(
         PROCESSED_FACILITIES_PATH,
-        usecols=["facname","facgroup","facsubgrp","factype","boro","longitude","latitude"],
+        usecols=["facname","facgroup","facsubgrp","factype","boro","latitude","longitude"],
     ).dropna()
 
     facilities["facname"] = facilities["facname"].astype(str).str.strip()
@@ -54,8 +54,8 @@ def load_facilities_data():
     facilities["facsubgrp"] = facilities["facsubgrp"].astype(str).str.strip()
     facilities["factype"] = facilities["factype"].astype(str).str.strip()
     facilities["boro"] = facilities["boro"].astype(str).str.strip()
-    facilities["longitude"] = pd.to_numeric(facilities["longitude"], errors="coerce")
     facilities["latitude"] = pd.to_numeric(facilities["latitude"], errors="coerce")
+    facilities["longitude"] = pd.to_numeric(facilities["longitude"], errors="coerce")
     facilities = facilities.dropna()
 
     data = []
@@ -119,7 +119,10 @@ def cluster_locations(matches, k=TOTAL_K, random_state=0):
             closest_clus.total_complaint += 1
 
     for c in clusters:
-        c.ratio = c.matched_complaint / c.total_complaint
+        if c.total_complaint == 0:
+            c.ratio = 1
+        else:
+            c.ratio = c.matched_complaint / c.total_complaint
 
     clusters.sort(key=lambda c : c.ratio)
     

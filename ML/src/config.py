@@ -14,22 +14,26 @@ PROCESSED_311_FILENAME = "cleaned_311.csv"
 EMBEDDED_311_FILENAME = "cleaned_311.npy"
 EMBEDDINGS_MODEL = "sentence-transformers/all-MiniLM-L6-v2" # can use even smaller model if necessary
 
+LLM_MODEL = "Qwen/Qwen3.5-0.8B"
+MAX_NEW_TOKENS = 128
+
 RAW_311_PATH = RAW_DIR / RAW_311_FILENAME
 PROCESSED_311_PATH = PROCESSED_DIR / PROCESSED_311_FILENAME
 EMBEDDINGS_311_PATH = PROCESSED_DIR / EMBEDDED_311_FILENAME
 
 MAX_CLEAN_ROWS = 1000000 # 80MB of size, can be lower if necessary
-TOTAL_K = 30
+TOTAL_K = 50
 CATEGORY_311_TOP_K = 50 # can be higher if necessary
 CATEGORY_FACILITIES_TOP_K = 30
+PLACE_RESULTS_TOP_K = 5
 CLUSTER_TOPK = 5
 
 SOURCE_COLUMNS = [
     "Created Date",
     "Problem (formerly Complaint Type)",
     "Problem Detail (formerly Descriptor)",
-    "Longitude",
     "Latitude",
+    "Longitude",
 ]
 
 RENAMED_COLUMNS = {
@@ -41,8 +45,8 @@ OUTPUT_COLUMNS = [
     "Created Date",
     "Problem",
     "Problem Detail",
-    "Longitude",
     "Latitude",
+    "Longitude",
 ]
 
 RAW_FACILITIES_FILENAME = "Facilities_Database_20260429.csv"
@@ -71,6 +75,6 @@ FACILITIES_OUTPUT_COLUMNS = [
     "facsubgrp",
     "factype",
     "boro",
-    "longitude",
     "latitude",
+    "longitude",
 ]

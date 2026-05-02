@@ -29,8 +29,8 @@ def preprocess_311():
     df["Created Date"] = df["Created Date"].astype("string").str.strip()
     df["Problem"] = df["Problem"].astype("string").str.strip()
     df["Problem Detail"] = df["Problem Detail"].astype("string").str.strip()
-    df["Longitude"] = pd.to_numeric(df["Longitude"], errors="coerce")
     df["Latitude"] = pd.to_numeric(df["Latitude"], errors="coerce")
+    df["Longitude"] = pd.to_numeric(df["Longitude"], errors="coerce")
 
     df = df[OUTPUT_COLUMNS].dropna()
     df.to_csv(PROCESSED_311_PATH, index=False)
@@ -50,8 +50,8 @@ def preprocess_facilities():
     df["facsubgrp"] = df["facsubgrp"].astype("string").str.strip()
     df["factype"] = df["factype"].astype("string").str.strip()
     df["boro"] = df["boro"].astype("string").str.strip()
-    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
     df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
 
     df = df[FACILITIES_OUTPUT_COLUMNS].dropna()
     df = df[(df["longitude"] != 0.0) & (df["latitude"] != 0.0)]
