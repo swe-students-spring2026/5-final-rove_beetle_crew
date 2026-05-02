@@ -13,7 +13,6 @@ class Cluster:
         self.ratio = 0
         self.rank = 0
 
-
     def __repr__(self):
         return (
             f"center={self.center}, "
@@ -42,11 +41,20 @@ def load_311_data():
         data.append(list(row))
     return data
 
+
 def load_facilities_data():
     """load cleaned csv to list"""
     facilities = pd.read_csv(
         PROCESSED_FACILITIES_PATH,
-        usecols=["facname","facgroup","facsubgrp","factype","boro","latitude","longitude"],
+        usecols=[
+            "facname",
+            "facgroup",
+            "facsubgrp",
+            "factype",
+            "boro",
+            "latitude",
+            "longitude",
+        ],
     ).dropna()
 
     facilities["facname"] = facilities["facname"].astype(str).str.strip()
@@ -62,6 +70,7 @@ def load_facilities_data():
     for row in facilities.to_numpy():
         data.append(list(row))
     return data
+
 
 def dist(a, b):
     """calculate euclidean distance square"""
@@ -104,7 +113,7 @@ def cluster_locations(matches, k=TOTAL_K, random_state=0):
         point = [d[2], d[3]]
 
         closest_clus = None
-        min_dist = float('inf')
+        min_dist = float("inf")
 
         for c in clusters:
             curr_dist = dist(point, c.center)
@@ -124,15 +133,15 @@ def cluster_locations(matches, k=TOTAL_K, random_state=0):
         else:
             c.ratio = c.matched_complaint / c.total_complaint
 
-    clusters.sort(key=lambda c : c.ratio)
-    
+    clusters.sort(key=lambda c: c.ratio)
+
     data = load_facilities_data()
 
     for d in data:
         point = [d[5], d[6]]
 
         closest_clus = None
-        min_dist = float('inf')
+        min_dist = float("inf")
 
         for c in clusters:
             curr_dist = dist(point, c.center)
@@ -140,7 +149,7 @@ def cluster_locations(matches, k=TOTAL_K, random_state=0):
                 min_dist = curr_dist
                 closest_clus = c
 
-        closest_clus.facilities.append(d[:-2])
+        closest_clus.facilities.append(d)
 
     for i in range(CLUSTER_TOPK):
         clusters[i].rank = i

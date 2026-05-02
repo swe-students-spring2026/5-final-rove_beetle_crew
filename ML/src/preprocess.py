@@ -14,8 +14,9 @@ from config import (
     RAW_FACILITIES_PATH,
     PROCESSED_FACILITIES_PATH,
     FACILITIES_SOURCE_COLUMNS,
-    FACILITIES_OUTPUT_COLUMNS
+    FACILITIES_OUTPUT_COLUMNS,
 )
+
 
 def preprocess_311():
     df = pd.read_csv(
@@ -58,6 +59,7 @@ def preprocess_facilities():
     df.to_csv(PROCESSED_FACILITIES_PATH, index=False)
 
     print(f"Cleaned dataset written to {PROCESSED_FACILITIES_PATH}")
+
 
 if __name__ == "__main__":
     preprocess_311()

@@ -38,6 +38,7 @@ def embed_311():
     np.save(EMBEDDINGS_311_PATH, embeddings)
     return EMBEDDINGS_311_PATH
 
+
 def load_facilities_categories(clusters):
     """load facilitities' categories from clusters from clustering logic"""
     rows = []
@@ -56,9 +57,14 @@ def load_facilities_categories(clusters):
     categories["factype"] = categories["factype"].astype(str).str.strip()
     categories = categories.drop_duplicates().reset_index(drop=True)
     categories["text"] = (
-        categories["facgroup"] + " " + categories["facsubgrp"] + " " + categories["factype"]
+        categories["facgroup"]
+        + " "
+        + categories["facsubgrp"]
+        + " "
+        + categories["factype"]
     )
     return categories
+
 
 def embed_facilities(clusters):
     """embed the facilities' categories"""
@@ -66,3 +72,35 @@ def embed_facilities(clusters):
     model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
 
     return model.encode(categories["text"].tolist(), normalize_embeddings=True)
+
+
+def load_facility_names(clusters):
+    """load facilitities' names"""
+    rows = []
+
+    for c in clusters:
+        for facility in c.facilities:
+            if len(facility) < 3:
+                continue
+
+            rows.append([facility[0], facility[2]])
+
+    names = pd.DataFrame(rows, columns=["facname", "facsubgrp"])
+
+    if names.empty:
+        names = pd.DataFrame(columns=["facname", "facsubgrp", "text"])
+        return names
+
+    names["facname"] = names["facname"].astype(str).str.strip()
+    names["facsubgrp"] = (
+        names["facsubgrp"].astype(str).str.strip()
+    )  # this to avoid noise
+    names["text"] = names["facname"] + " " + names["facsubgrp"]
+    return names
+
+
+def embed_facility_names(facility_names):
+    """embed the facilities' names"""
+    model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
+
+    return model.encode(facility_names["text"].tolist(), normalize_embeddings=True)

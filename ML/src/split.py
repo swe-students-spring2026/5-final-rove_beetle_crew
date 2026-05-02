@@ -4,12 +4,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from config import MAX_NEW_TOKENS, LLM_MODEL
 
+
 @lru_cache(maxsize=1)
 def load_model():
     tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
     model = AutoModelForCausalLM.from_pretrained(LLM_MODEL)
 
     return tokenizer, model
+
 
 def generate(prompt):
     tokenizer, model = load_model()
@@ -29,7 +31,9 @@ def generate(prompt):
         max_new_tokens=MAX_NEW_TOKENS,
     )
 
-    return tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True).strip()
+    return tokenizer.decode(
+        outputs[0][inputs["input_ids"].shape[-1] :], skip_special_tokens=True
+    ).strip()
 
 
 def parse_json(text):
@@ -39,7 +43,7 @@ def parse_json(text):
     if start == -1 or end == -1:
         raise ValueError("Invalid JSON format")
 
-    return json.loads(text[start:end + 1])
+    return json.loads(text[start : end + 1])
 
 
 def reverse_query(query):
@@ -55,19 +59,15 @@ Attribute: {query}
 
 def split_query(query, debug=False):
     prompt = f"""
-Split the user's request into exactly two short search phrases.
+Split the user's request into exactly two parts.
 Return exactly one valid JSON object:
 
 Definitions:
 - "attribute": the desired qualities, atmosphere, or characteristics.
-- "type": the kind of place, activity, or facility being sought.
+- "cleaned_query": user's request minus the attribute.
 
 Rules:
-- Use short, generic phrases.
 - Preserve the user's meaning.
-- Do not include locations, business names, or unnecessary words.
-- Both values must be lowercase.
-- Each value should usually be 1-5 words.
 - Output JSON only.
 - Do not include explanations or markdown.
 
@@ -78,8 +78,8 @@ User request: {query}
     parsed = parse_json(response)
 
     attribute = parsed["attribute"]
+    place_type = parsed["cleaned_query"]
     reversed_attribute = reverse_query(attribute)
-    place_type = parsed["type"]
 
     if debug:
         print(response)

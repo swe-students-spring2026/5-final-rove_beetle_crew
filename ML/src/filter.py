@@ -1,5 +1,6 @@
 from clustering import cluster_locations
 from search import find_311_categories, find_facilities_categories
+from config import PLACE_RESULTS_TOP_K
 
 
 def facility_match_set(results):
@@ -48,6 +49,42 @@ def filter_clusters(query_311, query_facilities, debug=False):
 
             if category in matched_facilities_set:
                 filtered_facilities.append(facility)
+
+        c.facilities = filtered_facilities
+
+        if debug:
+            print(c)
+
+            for i in c.facilities:
+                print(i)
+
+    return clusters
+
+
+def further_filter(clusters, place_type, top_k=PLACE_RESULTS_TOP_K, debug=False):
+    """further filter each cluster's facilities by their names, and filter by topk matched places"""
+    from search import find_facility_name_scores
+
+    scored_facilities = find_facility_name_scores(place_type, clusters)
+    scored_facilities.sort(key=lambda item: item["score"], reverse=True)
+    scored_facilities = scored_facilities[:top_k]
+
+    score_by_position = {}
+    for item in scored_facilities:
+        position = (item["cluster_index"], item["facility_index"])
+        score_by_position[position] = item["score"]
+
+    for cluster_index, c in enumerate(clusters):
+        filtered_facilities = []
+
+        for facility_index, facility in enumerate(c.facilities):
+            score = score_by_position.get((cluster_index, facility_index))
+            if score is None:
+                continue
+
+            scored_facility = list(facility)
+            scored_facility.append(score)
+            filtered_facilities.append(scored_facility)
 
         c.facilities = filtered_facilities
 
