@@ -19,6 +19,7 @@ from config import (
 
 
 def preprocess_311():
+    """Preprocess the RAW 13GB data"""
     df = pd.read_csv(
         RAW_311_PATH,
         usecols=SOURCE_COLUMNS,
@@ -40,6 +41,7 @@ def preprocess_311():
 
 
 def preprocess_facilities():
+    """Preprocess the nyc facility dataset"""
     df = pd.read_csv(
         RAW_FACILITIES_PATH,
         usecols=FACILITIES_SOURCE_COLUMNS,

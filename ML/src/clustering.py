@@ -24,7 +24,7 @@ class Cluster:
 
 
 def load_311_data():
-    """load cleaned csv to list"""
+    """Load cleaned csv to list"""
     complaints = pd.read_csv(
         PROCESSED_311_PATH,
         usecols=["Problem", "Problem Detail", "Latitude", "Longitude"],
@@ -92,7 +92,7 @@ def match_set(matches):
 
 
 def cluster_locations(matches, k=TOTAL_K, random_state=0):
-    """group each points to nearest cluster, basically a 1 iteration kmeans with only matchign info"""
+    """Group each points to nearest cluster, basically a 1 iteration kmeans with only matchign info"""
 
     data = load_311_data()
 

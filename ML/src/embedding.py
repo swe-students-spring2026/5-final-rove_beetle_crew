@@ -14,7 +14,7 @@ from config import (
 
 
 def load_311_categories():
-    """load categories from cleaned dataset"""
+    """Load categories from cleaned dataset"""
     categories = pd.read_csv(
         PROCESSED_311_PATH,
         usecols=["Problem", "Problem Detail"],
@@ -27,7 +27,7 @@ def load_311_categories():
 
 
 def embed_311():
-    """embed the categories"""
+    """Embed the categories"""
     if EMBEDDINGS_311_PATH.exists():
         return EMBEDDINGS_311_PATH
 
@@ -40,7 +40,7 @@ def embed_311():
 
 
 def load_facilities_categories(clusters):
-    """load facilitities' categories from clusters from clustering logic"""
+    """Load facilitities' categories from clusters from clustering logic"""
     rows = []
 
     for c in clusters:
@@ -67,7 +67,7 @@ def load_facilities_categories(clusters):
 
 
 def embed_facilities(clusters):
-    """embed the facilities' categories"""
+    """Embed the facilities' categories"""
     categories = load_facilities_categories(clusters)
     model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
 
@@ -75,7 +75,7 @@ def embed_facilities(clusters):
 
 
 def load_facility_names(clusters):
-    """load facilitities' names"""
+    """Load facilitities' names"""
     rows = []
 
     for c in clusters:
@@ -100,7 +100,7 @@ def load_facility_names(clusters):
 
 
 def embed_facility_names(facility_names):
-    """embed the facilities' names"""
+    """Embed the facilities' names"""
     model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
 
     return model.encode(facility_names["text"].tolist(), normalize_embeddings=True)

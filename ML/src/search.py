@@ -73,7 +73,7 @@ def find_facilities_categories(query, clusters):
 
 
 def find_facility_name_scores(query, clusters):
-    """find facilities simililarity with user querey, mapped by indexes"""
+    """Find facilities simililarity with user querey, mapped by indexes"""
     query = str(query.strip())
     facility_names = load_facility_names(clusters)
     facility_positions = []

@@ -4,7 +4,7 @@ from config import PLACE_RESULTS_TOP_K
 
 
 def facility_match_set(results):
-    """create a set to search from the semantic search output"""
+    """Create a set to search from the semantic search output"""
     matched = set()
 
     rows = results[["facgroup", "facsubgrp", "factype"]].dropna().to_numpy()
@@ -21,7 +21,7 @@ def facility_match_set(results):
 
 
 def filter_clusters(query_311, query_facilities, debug=False):
-    """filter each cluster in clusters so only matched place are kept"""
+    """Filter each cluster in clusters so only matched place are kept"""
     matched_311 = find_311_categories(query_311)
     clusters = cluster_locations(matched_311)
 
@@ -62,7 +62,7 @@ def filter_clusters(query_311, query_facilities, debug=False):
 
 
 def further_filter(clusters, place_type, top_k=PLACE_RESULTS_TOP_K, debug=False):
-    """further filter each cluster's facilities by their names, and filter by topk matched places"""
+    """Further filter each cluster's facilities by their names, and filter by topk matched places"""
     from search import find_facility_name_scores
 
     scored_facilities = find_facility_name_scores(place_type, clusters)

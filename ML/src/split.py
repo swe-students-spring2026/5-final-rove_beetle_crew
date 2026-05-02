@@ -7,6 +7,7 @@ from config import MAX_NEW_TOKENS, LLM_MODEL
 
 @lru_cache(maxsize=1)
 def load_model():
+    """Cached model loader"""
     tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
     model = AutoModelForCausalLM.from_pretrained(LLM_MODEL)
 
@@ -14,6 +15,7 @@ def load_model():
 
 
 def generate(prompt):
+    """Generate prompt"""
     tokenizer, model = load_model()
 
     messages = [{"role": "user", "content": prompt}]
@@ -37,6 +39,7 @@ def generate(prompt):
 
 
 def parse_json(text):
+    """Parse llm generated json"""
     start = text.find("{")
     end = text.find("}")
 
@@ -47,6 +50,7 @@ def parse_json(text):
 
 
 def reverse_query(query):
+    """Return the opposite meaning of the attribute query"""
     prompt = f"""
 Return the qualities that mean the opposite of the following attribute.
 Return only the antonym phrase, with no explanation.
@@ -58,6 +62,7 @@ Attribute: {query}
 
 
 def split_query(query, debug=False):
+    """Split the query, and reverse the attribute query"""
     prompt = f"""
 Split the user's request into exactly two parts.
 Return exactly one valid JSON object:
