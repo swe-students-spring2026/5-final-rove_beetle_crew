@@ -3,14 +3,8 @@ name: Web App CI/CD
 on:
   push:
     branches: [main]
-    paths:
-      - "web-app/**"
-      - ".github/workflows/webapp.yml"
   pull_request:
     branches: [main]
-    paths:
-      - "web-app/**"
-      - ".github/workflows/webapp.yml"
 
 jobs:
   test:
@@ -24,7 +18,7 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install pytest pandas pytest-cov flask requests
+        run: pip install -r web-app/requirements.txt pytest pytest-cov
 
       - name: Run tests
         run: pytest
@@ -32,7 +26,7 @@ jobs:
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
 
@@ -48,3 +42,16 @@ jobs:
           context: ./web-app
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/spot-finder-webapp:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
+
+      - name: Deploy to Digital Ocean App Platform
+        run: doctl apps create-deployment ${{ secrets.DIGITAL_OCEAN_WEBAPP_ID }} --wait

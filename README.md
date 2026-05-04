@@ -248,9 +248,10 @@ Each subsystem has its own GitHub Actions workflow under `.github/workflows/`, t
 | ML Service | `ml.yml`       | Push or PR to `main` (ML files)      |
 
 Each workflow:
-1. Runs the test suite with `pytest`
-2. Builds the Docker image
+1. Runs the test suite with `pytest` *(on every push and pull request to `main`)*
+2. Builds the Docker image *(on push to `main` only, after tests pass)*
 3. Pushes the image to Docker Hub *(on push to `main` only)*
+4. Deploys to Digital Ocean App Platform *(on push to `main` only, after image is pushed)*
 
 ### Required GitHub Repository Secrets
 
@@ -260,6 +261,9 @@ Add these under **Settings → Secrets and variables → Actions** in your GitHu
 |--------|-------------|
 | `DOCKERHUB_USERNAME` | Your Docker Hub username |
 | `DOCKERHUB_TOKEN` | Docker Hub access token (not your password) |
+| `DIGITAL_OCEAN_ACCESS_TOKEN` | Digital Ocean API token |
+| `DIGITAL_OCEAN_WEBAPP_ID` | Digital Ocean App Platform app ID for the web-app |
+| `DIGITAL_OCEAN_ML_ID` | Digital Ocean App Platform app ID for the ML service |
 
 ---
 
