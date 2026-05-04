@@ -1,0 +1,50 @@
+name: ML Service CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ML/**"
+      - ".github/workflows/ml.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "ML/**"
+      - ".github/workflows/ml.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install pytest pandas pytest-cov
+
+      - name: Run tests
+        run: pytest
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push ML image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ML
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/spot-finder-ml:latest

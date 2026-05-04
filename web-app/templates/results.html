@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results – NYC 311 Smart Spot Finder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>NYC 311 Smart Spot Finder</h1>
+      <a href="/" class="back-link">← New search</a>
+    </header>
+
+    <div class="query-summary">
+      <p>Showing spots that avoid <strong>{{ query_311 }}</strong> complaints near <strong>{{ query_facilities }}</strong> facilities.</p>
+    </div>
+
+    {% if clusters %}
+      {% for cluster in clusters %}
+      <div class="cluster-card">
+        <div class="cluster-header">
+          <span class="cluster-location">{{ cluster.latitude | round(4) }}, {{ cluster.longitude | round(4) }}</span>
+          <span class="cluster-ratio {{ 'good' if cluster.complaint_ratio < 0.2 else 'warn' if cluster.complaint_ratio < 0.5 else 'bad' }}">
+            Complaint match rate: {{ (cluster.complaint_ratio * 100) | round(1) }}%
+          </span>
+        </div>
+
+        {% if cluster.facilities %}
+        <table class="facility-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Group</th>
+              <th>Borough</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in cluster.facilities %}
+            <tr>
+              <td>{{ f.name }}</td>
+              <td>{{ f.type }}</td>
+              <td>{{ f.group }}</td>
+              <td>{{ f.borough }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="no-facilities">No matching facilities in this area.</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="no-results">No results found. Try different search terms.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

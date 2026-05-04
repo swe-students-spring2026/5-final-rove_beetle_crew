@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYC 311 Smart Spot Finder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>NYC 311 Smart Spot Finder</h1>
+      <p class="subtitle">Find the best spots in NYC using real 311 complaint data.</p>
+    </header>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form action="/search" method="POST" class="search-form">
+      <div class="field">
+        <label for="query_311">What kind of complaints should the area <em>avoid</em>?</label>
+        <input
+          type="text"
+          id="query_311"
+          name="query_311"
+          placeholder="e.g. noisy, dangerous, dirty"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for="query_facilities">What kind of place are you looking for?</label>
+        <input
+          type="text"
+          id="query_facilities"
+          name="query_facilities"
+          placeholder="e.g. library, park, study spot"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn">Find Spots</button>
+    </form>
+  </div>
+</body>
+</html>
