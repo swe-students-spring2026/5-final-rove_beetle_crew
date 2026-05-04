@@ -18,7 +18,7 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install -r web-app/requirements.txt pytest pytest-cov
+        run: pip install -r web-app/requirements.txt pytest pytest-cov pandas
 
       - name: Run tests
         run: pytest
