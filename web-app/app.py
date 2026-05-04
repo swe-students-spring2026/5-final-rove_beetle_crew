@@ -1,4 +1,13 @@
+import sys
+from pathlib import Path
+
 from flask import Flask, render_template, request
+
+WEB_APP_DIR = Path(__file__).resolve().parent
+REPO_ROOT = WEB_APP_DIR.parent
+ML_SRC_DIR = REPO_ROOT / "ML" / "src"
+
+sys.path.insert(0, str(ML_SRC_DIR))
 
 from filter import filter_clusters, further_filter
 from split import split_query
