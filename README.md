@@ -50,13 +50,13 @@ The project is a monorepo composed of **2 containerized subsystems**:
 
 ## Team - Rove Beetle Crew
 
-| Name | GitHub | Role |
-|------|--------|------|
-| Zeyue Xu | [@zeyuexu123](https://github.com/zeyuexu123) | Data preprocessing & ML pipeline |
-| Tae Kim | [@thk224](https://github.com/thk224) | Deployment (Digital Ocean), Docker, Documentation |
-| Rohan Ahmad | [@ra4059](https://github.com/ra4059) | Test cases & CI/CD pipeline |
-| Caleb Jawharjian | [@calebjawharjian](https://github.com/calebjawharjian) | Frontend web app |
-| Zheqi Zhang | [@zheqi111](https://github.com/zheqi111) | Backend & MongoDB |
+| Name | GitHub |
+|------|--------|
+| Zeyue Xu | [@zeyuexu123](https://github.com/zeyuexu123) |
+| Tae Kim | [@thk224](https://github.com/thk224) |
+| Rohan Ahmad | [@ra4059](https://github.com/ra4059) |
+| Caleb Jawharjian | [@calebjawharjian](https://github.com/calebjawharjian) |
+| Zheqi Zhang | [@zheqi111](https://github.com/zheqi111) |
 
 ---
 
