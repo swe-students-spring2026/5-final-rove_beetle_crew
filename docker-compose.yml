@@ -17,7 +17,7 @@ services:
   web-app:
     build: ./web-app
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - ML_API_URL=http://ml:8000
       - SECRET_KEY=${SECRET_KEY:-change-me}
