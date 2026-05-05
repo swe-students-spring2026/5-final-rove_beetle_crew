@@ -41,22 +41,22 @@ The project is a monorepo composed of **2 containerized subsystems**:
 
 | Subsystem | Docker Hub Image |
 |-----------|-----------------|
-| Web App   | `your-dockerhub-username/spot-finder-webapp:latest` |
-| ML Service | `your-dockerhub-username/spot-finder-ml:latest` |
+| Web App   | `$DOCKERHUB_USERNAME/spot-finder-webapp:latest` |
+| ML Service | `$DOCKERHUB_USERNAME/spot-finder-ml:latest` |
 
-> **TODO:** Replace `your-dockerhub-username` with your actual Docker Hub username in the CI/CD workflows under `.github/workflows/`.
+> The Docker Hub username is stored as the `DOCKERHUB_USERNAME` GitHub Actions secret. Images are pushed automatically on every merge to `main`.
 
 ---
 
 ## Team - Rove Beetle Crew
 
-| Name | GitHub | Role |
-|------|--------|------|
-| Zeyue Xu | [@zeyuexu123](https://github.com/zeyuexu123) | Data preprocessing & ML pipeline |
-| Tae Kim | [@thk224](https://github.com/thk224) | Deployment (Digital Ocean), Docker, Documentation |
-| Rohan Ahmad | [@ra4059](https://github.com/ra4059) | Test cases & CI/CD pipeline |
-| Caleb Jawharjian | [@calebjawharjian](https://github.com/calebjawharjian) | Frontend web app |
-| Zheqi Zhang | [@zheqi111](https://github.com/zheqi111) | Backend & MongoDB |
+| Name | GitHub |
+|------|--------|
+| Zeyue Xu | [@zeyuexu123](https://github.com/zeyuexu123) |
+| Tae Kim | [@thk224](https://github.com/thk224) |
+| Rohan Ahmad | [@ra4059](https://github.com/ra4059) |
+| Caleb Jawharjian | [@calebjawharjian](https://github.com/calebjawharjian) |
+| Zheqi Zhang | [@zheqi111](https://github.com/zheqi111) |
 
 ---
 
@@ -137,7 +137,7 @@ docker compose up --build
 
 | Service    | URL                       |
 |------------|---------------------------|
-| Web App    | http://localhost:5000     |
+| Web App    | http://localhost:5001     |
 | ML API     | http://localhost:8000     |
 
 To stop all services:
@@ -187,6 +187,7 @@ Copy `env.example` to `.env` and fill in the values below before starting the ap
 .
  web-app/                    # Flask frontend
     app.py
+    db.py
     templates/
     static/
     Dockerfile
@@ -211,6 +212,7 @@ Copy `env.example` to `.env` and fill in the values below before starting the ap
 
  tests/                      # Test suite
     test_basic.py
+    test_ml_basic.py
     test_preprocess.py
 
  .github/
@@ -218,6 +220,8 @@ Copy `env.example` to `.env` and fill in the values below before starting the ap
         webapp.yml          # CI/CD pipeline for web-app
         ml.yml              # CI/CD pipeline for ML service
         test.yml            # General test runner
+        mongodb.yml         # CI/CD pipeline for MongoDB backend
+        event-logger.yml    # Event logging workflow
 
  docker-compose.yml
  env.example                 # Template — copy to .env and fill in values
@@ -242,10 +246,13 @@ The `pyproject.toml` configures pytest to discover tests under the `tests/` dire
 
 Each subsystem has its own GitHub Actions workflow under `.github/workflows/`, triggered on pushes or pull requests to `main` that touch the relevant directory.
 
-| Subsystem  | Workflow File  | Trigger                              |
-|------------|----------------|--------------------------------------|
-| Web App    | `webapp.yml`   | Push or PR to `main` (web-app files) |
-| ML Service | `ml.yml`       | Push or PR to `main` (ML files)      |
+| Subsystem  | Workflow File      | Trigger                              |
+|------------|--------------------|--------------------------------------|
+| Web App    | `webapp.yml`       | Push or PR to `main`                 |
+| ML Service | `ml.yml`           | Push or PR to `main`                 |
+| MongoDB    | `mongodb.yml`      | Push or PR to `main`                 |
+| Tests      | `test.yml`         | Push or PR to `main`                 |
+| Events     | `event-logger.yml` | Push or PR to `main`                 |
 
 Each workflow:
 1. Runs the test suite with `pytest` *(on every push and pull request to `main`)*
