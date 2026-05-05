@@ -26,7 +26,11 @@ jobs:
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      secrets.DOCKERHUB_USERNAME != '' &&
+      secrets.DOCKERHUB_TOKEN != ''
     steps:
       - uses: actions/checkout@v3
 
@@ -46,7 +50,11 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      secrets.DIGITAL_OCEAN_ACCESS_TOKEN != '' &&
+      secrets.DIGITAL_OCEAN_WEBAPP_ID != ''
     steps:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
