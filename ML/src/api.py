@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 
 from filter import filter_clusters, further_filter
-from split import split_query
 
 app = Flask(__name__)
 
@@ -19,10 +18,8 @@ def recommend():
     if not query:
         return jsonify({"error": "query is required"}), 400
 
-    reversed_attribute, place_type = split_query(query)
-
-    clusters = filter_clusters(reversed_attribute, place_type)
-    clusters = further_filter(clusters, place_type)
+    clusters = filter_clusters(query, query)
+    clusters = further_filter(clusters, query)
 
     results = []
     for cluster in clusters:
@@ -52,8 +49,8 @@ def recommend():
     )
 
     return jsonify({
-        "reversed_attribute": reversed_attribute,
-        "place_type": place_type,
+        "reversed_attribute": query,
+        "place_type": query,
         "results": results,
     })
 
