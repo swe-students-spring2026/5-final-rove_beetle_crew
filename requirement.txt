@@ -3,3 +3,5 @@ pandas
 sentence_transformers
 torch
 transformers
+flask
+requests
