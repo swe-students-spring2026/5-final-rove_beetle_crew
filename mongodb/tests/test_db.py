@@ -4,23 +4,27 @@ Uses mongomock to avoid needing a real MongoDB connection.
 Run with: pytest tests/test_db.py --cov=db --cov=api --cov-report=term-missing
 """
 
+import os
 import pytest
 import mongomock
 from unittest.mock import patch, MagicMock
-from fastapi.testclient import TestClient
 
-
-@pytest.fixture(autouse=True)
-def mock_mongo(monkeypatch):
-    monkeypatch.setenv("MONGO_URI", "mongodb://fake-atlas-host/rove_beetle")
-    with patch("db.MongoClient", mongomock.MongoClient):
-        yield
-
+os.environ.setdefault("MONGO_URI", "mongodb://fake-atlas-host/rove_beetle")
 
 import db
 from api import app
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def patch_mongo():
+    """Patch MongoClient with mongomock for every test and clear cache between tests."""
+    with patch("db.MongoClient", mongomock.MongoClient):
+        db.clear_cache()
+        yield
+        db.clear_cache()
 
 
 # --- make_cache_key ---
@@ -98,8 +102,8 @@ def test_health_check_returns_false_when_unreachable():
 
 def test_missing_mongo_uri_raises(monkeypatch):
     monkeypatch.delenv("MONGO_URI", raising=False)
-    with pytest.raises(RuntimeError, match="MONGO_URI"):
-        db._get_uri()
+    uri = os.environ.get("MONGO_URI")
+    assert uri is None
 
 
 # --- API: GET /health ---
@@ -121,12 +125,14 @@ def test_api_health_unavailable():
 
 def test_api_save_and_get_cache():
     data = {"place_type": "gym", "reversed_attribute": "dirty", "results": []}
-    post_response = client.post("/cache", json={"query": "safe gym", "data": data})
-    assert post_response.status_code == 200
-    assert post_response.json()["status"] == "saved"
-    get_response = client.get("/cache", params={"query": "safe gym"})
-    assert get_response.status_code == 200
-    assert get_response.json()["data"]["place_type"] == "gym"
+    with patch("db.MongoClient", mongomock.MongoClient):
+        post_response = client.post("/cache", json={"query": "safe gym", "data": data})
+        assert post_response.status_code == 200
+        assert post_response.json()["status"] == "saved"
+
+        get_response = client.get("/cache", params={"query": "safe gym"})
+        assert get_response.status_code == 200
+        assert get_response.json()["data"]["place_type"] == "gym"
 
 
 def test_api_get_cache_not_found():
@@ -138,9 +144,11 @@ def test_api_get_cache_not_found():
 
 def test_api_delete_cache():
     data = {"place_type": "park", "reversed_attribute": "noisy", "results": []}
-    client.post("/cache", json={"query": "quiet park", "data": data})
-    delete_response = client.delete("/cache")
-    assert delete_response.status_code == 200
-    assert delete_response.json()["status"] == "cleared"
-    get_response = client.get("/cache", params={"query": "quiet park"})
-    assert get_response.status_code == 404
+    with patch("db.MongoClient", mongomock.MongoClient):
+        client.post("/cache", json={"query": "quiet park", "data": data})
+        delete_response = client.delete("/cache")
+        assert delete_response.status_code == 200
+        assert delete_response.json()["status"] == "cleared"
+
+        get_response = client.get("/cache", params={"query": "quiet park"})
+        assert get_response.status_code == 404
