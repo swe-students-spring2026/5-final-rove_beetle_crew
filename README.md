@@ -26,7 +26,7 @@ The project is a monorepo composed of **2 containerized subsystems**:
      Port 5000              Port 8000
 
     Docker Hub              Docker Hub
-    + Digital Ocean         + Digital Ocean
+    + Render                + Render
 
 ```
 
@@ -92,25 +92,9 @@ Open `.env` and fill in your values. See the [Environment Variables](#environmen
 
 ### 3. Load the Dataset
 
-You have two options:
+The preprocessed data files are already committed to the repository under `ML/data/processed/` — no manual download needed. When you clone the repo and run Docker, the data is included automatically.
 
-#### Option A - Recommended: Use Preprocessed Data
-
-Download the preprocessed datasets from Google Drive and place them in `ML/data/processed/`:
-
- [Download preprocessed data from Google Drive](https://drive.google.com/drive/folders/1mOc7ghd8UTucCuDFEdWuDbvzaNJLh33n?usp=sharing)
-
-Your directory should look like this when done:
-
-```
-ML/
- data/
-     processed/
-         [preprocessed files here]
-         ...
-```
-
-#### Option B - Manual: Download Raw Data and Preprocess
+If you need to re-run preprocessing from raw data:
 
 1. Download the two raw datasets:
    - [311 Service Requests (2020-Present)](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2020-to-Present/erm2-nwe9/about_data)
@@ -258,7 +242,8 @@ Each workflow:
 1. Runs the test suite with `pytest` *(on every push and pull request to `main`)*
 2. Builds the Docker image *(on push to `main` only, after tests pass)*
 3. Pushes the image to Docker Hub *(on push to `main` only)*
-4. Deploys to Digital Ocean App Platform *(on push to `main` only, after image is pushed)*
+
+Render automatically redeploys both services on every push to `main` via the Git Provider integration — no additional deploy step is needed in CI/CD.
 
 ### Required GitHub Repository Secrets
 
@@ -268,15 +253,12 @@ Add these under **Settings → Secrets and variables → Actions** in your GitHu
 |--------|-------------|
 | `DOCKERHUB_USERNAME` | Your Docker Hub username |
 | `DOCKERHUB_TOKEN` | Docker Hub access token (not your password) |
-| `DIGITAL_OCEAN_ACCESS_TOKEN` | Digital Ocean API token |
-| `DIGITAL_OCEAN_WEBAPP_ID` | Digital Ocean App Platform app ID for the web-app |
-| `DIGITAL_OCEAN_ML_ID` | Digital Ocean App Platform app ID for the ML service |
 
 ---
 
 ## Live Deployment
 
-The application is deployed to **Digital Ocean** automatically on every push to `main`.
+The application is deployed to **Render** automatically on every push to `main`.
 
 - **Web App**: *(update once deployed)*
 - **ML Service**: *(update once deployed)*
@@ -293,12 +275,12 @@ The application is deployed to **Digital Ocean** automatically on every push to 
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
 | Container Registry | Docker Hub |
-| Cloud Deployment | Digital Ocean |
+| Cloud Deployment | Render |
 
 ---
 
 ## Notes
 
-- Raw dataset files are **not committed** to this repository due to file size. See [Load the Dataset](#3-load-the-dataset) for setup instructions.
-- The `ML/data/processed/` directory must be populated before the app will function. Use the Google Drive link (Option A) for the fastest setup.
+- Preprocessed data files are committed to the repo under `ML/data/processed/` and are included in the Docker build automatically.
+- Raw dataset files are **not committed** to this repository. See [Load the Dataset](#3-load-the-dataset) if you need to re-run preprocessing.
 - `.env` is excluded from version control. Use `env.example` as the template.
