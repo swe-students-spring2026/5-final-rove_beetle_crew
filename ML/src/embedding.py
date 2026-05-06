@@ -4,15 +4,16 @@ This module provides functions to load, builds and saves category embeddings for
 
 import numpy as np
 import pandas as pd
-from sentence_transformers import SentenceTransformer
+from functools import lru_cache
 
 from config import (
     EMBEDDINGS_311_PATH,
-    EMBEDDINGS_MODEL,
     PROCESSED_311_PATH,
 )
+from model import model
 
 
+@lru_cache(maxsize=1)
 def load_311_categories():
     """Load categories from cleaned dataset"""
     categories = pd.read_csv(
@@ -32,8 +33,6 @@ def embed_311():
         return EMBEDDINGS_311_PATH
 
     categories = load_311_categories()
-    model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
-
     embeddings = model.encode(categories["text"].tolist(), normalize_embeddings=True)
     np.save(EMBEDDINGS_311_PATH, embeddings)
     return EMBEDDINGS_311_PATH
@@ -69,8 +68,6 @@ def load_facilities_categories(clusters):
 def embed_facilities(clusters):
     """Embed the facilities' categories"""
     categories = load_facilities_categories(clusters)
-    model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
-
     return model.encode(categories["text"].tolist(), normalize_embeddings=True)
 
 
@@ -101,6 +98,4 @@ def load_facility_names(clusters):
 
 def embed_facility_names(facility_names):
     """Embed the facilities' names"""
-    model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
-
     return model.encode(facility_names["text"].tolist(), normalize_embeddings=True)

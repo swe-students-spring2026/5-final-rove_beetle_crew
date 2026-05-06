@@ -4,9 +4,10 @@ This module provides utility for semantic search on 311 embeddings, edit the mai
 
 import numpy as np
 import torch
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import util
 
-from config import CATEGORY_311_TOP_K, CATEGORY_FACILITIES_TOP_K, EMBEDDINGS_MODEL
+from config import CATEGORY_311_TOP_K, CATEGORY_FACILITIES_TOP_K
+from model import model
 from embedding import (
     load_311_categories,
     embed_311,
@@ -16,8 +17,6 @@ from embedding import (
     embed_facility_names,
 )
 
-_model = SentenceTransformer(EMBEDDINGS_MODEL, device="cpu")
-
 
 def find_311_categories(query):
     """Find topk most similar 311 categories"""
@@ -26,7 +25,7 @@ def find_311_categories(query):
     categories = load_311_categories()
     embedded_category = torch.from_numpy(np.load(embed_311()))
 
-    embedded_query = _model.encode([query], normalize_embeddings=True)
+    embedded_query = model.encode([query], normalize_embeddings=True)
 
     hits = util.semantic_search(
         embedded_query,
@@ -49,7 +48,7 @@ def find_facilities_categories(query, clusters):
     categories = load_facilities_categories(clusters)
     embedded_category = torch.from_numpy(embed_facilities(clusters))
 
-    embedded_query = _model.encode([query], normalize_embeddings=True)
+    embedded_query = model.encode([query], normalize_embeddings=True)
 
     hits = util.semantic_search(
         embedded_query,
@@ -76,7 +75,7 @@ def find_facility_name_scores(query, clusters):
 
     embedded_names = torch.from_numpy(embed_facility_names(facility_names))
 
-    embedded_query = _model.encode([query], normalize_embeddings=True)
+    embedded_query = model.encode([query], normalize_embeddings=True)
 
     hits = util.semantic_search(
         embedded_query,

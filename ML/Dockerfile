@@ -17,6 +17,9 @@ COPY data/ ./data/
 
 WORKDIR /app/src
 
+# Pre-generate 311 embeddings so they're baked into the image
+RUN python -c "from embedding import embed_311; embed_311()"
+
 EXPOSE 8000
 
 CMD ["python", "api.py"]
