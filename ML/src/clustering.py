@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from functools import lru_cache
 
 from config import PROCESSED_311_PATH, PROCESSED_FACILITIES_PATH, CLUSTER_TOPK, TOTAL_K
 
@@ -23,6 +24,7 @@ class Cluster:
         )
 
 
+@lru_cache(maxsize=1)
 def load_311_data():
     """Load cleaned csv to list"""
     complaints = pd.read_csv(
@@ -42,6 +44,7 @@ def load_311_data():
     return data
 
 
+@lru_cache(maxsize=1)
 def load_facilities_data():
     """load cleaned csv to list"""
     facilities = pd.read_csv(
