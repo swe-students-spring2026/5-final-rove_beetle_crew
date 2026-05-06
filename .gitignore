@@ -1,4 +1,4 @@
-ML/data/
+ML/data/raw/
 *.npy
 pytest-cache-files-*/
 
